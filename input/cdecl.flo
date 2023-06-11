@@ -1,0 +1,7 @@
+entier f(entier a, entier b) {
+    retourner a + b;
+}
+
+entier x = f(2, 3);
+entier y = x + x;
+ecrire(y);

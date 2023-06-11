@@ -1,0 +1,8 @@
+entier f(entier e){
+	e = 7;
+	entier f = e;
+	ecrire(e);
+	retourner 5;
+}
+
+f(5);

@@ -1,0 +1,52 @@
+programme: instruction*
+
+bloc: "{" instruction* "}"
+
+?expr: expr_ou
+?expr_ou: (expr_ou "ou")? expr_et
+?expr_et: (expr_et "et")? expr_non
+?!expr_non: "non" expr_non | expr_rel
+?expr_rel: (expr_rel _op_rel)? expr_add
+?expr_add: (expr_add _op_addition)? expr_mult
+?expr_mult: (expr_mult _op_multiplication)? expr_unaire
+?expr_unaire: _op_unaire expr_unaire
+            | expr_atome
+?expr_atome: expr_atome "(" [arguments] ")" -> appel
+           | atome
+?atome: "(" expr ")"
+      | BOOLEEN
+      | ENTIER
+      | NOM
+
+arguments: expr ("," expr)*
+
+!_op_unaire: "-"
+!_op_addition: "+" | "-"
+!_op_multiplication: "*" | "/" | "%"
+!_op_rel: "==" | "!=" | "<=" | ">=" | "<" | ">"
+
+?instruction:  NOM "=" expr ";" -> affectation
+           | "tantque" "(" expr ")" bloc -> tantque
+           | _si -> si
+           | TYPE NOM ["=" expr] ";" -> decl
+           | "retourner" expr ";" -> retourner
+           | TYPE NOM "(" [arguments_decl] ")" bloc -> fonction
+           | expr ";" -> expr_instr
+
+_si: "si" "(" expr ")" bloc ("sinon" sinon)?
+?sinon: _si -> si
+    | bloc
+
+argument_decl: TYPE NOM
+arguments_decl: argument_decl ("," argument_decl)*
+
+%ignore /[\t \f\n]+/  // WS
+%ignore COMMENTAIRE
+
+NOM: /[^\W\d]\w*/
+COMMENTAIRE: /#[^\n]*/
+ENTIER: "0" | /[1-9][0-9]*/
+BOOLEEN: "Vrai"
+       | "Faux"
+TYPE: "entier"
+    | "booleen"
